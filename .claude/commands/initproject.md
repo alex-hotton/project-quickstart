@@ -576,13 +576,13 @@ Demande à l'utilisateur : "Est-ce que tu as déjà créé ton projet Supabase ?
 Demande les clés une par une :
 
 1. "Quelle est l'URL de ton projet Supabase ?"
-   - (Se trouve dans Settings > API, format: `https://xxx.supabase.co`)
+   - (Se trouve dans **Settings > Data API**, format: `https://xxx.supabase.co`)
 
 2. "Quelle est ta clé anon/public ?"
-   - (Se trouve dans Settings > API, commence par `eyJ...`)
+   - (Se trouve dans **API Keys > Legacy**, clé "anon", commence par `eyJ...`)
 
 3. "Quelle est ta clé service_role ?" (pour le MCP)
-   - (Se trouve dans Settings > API, section "service_role key")
+   - (Se trouve dans **API Keys > Legacy**, clé "service_role")
 
 ### Étape 3.3 : Création du .env
 
