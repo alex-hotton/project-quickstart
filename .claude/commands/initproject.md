@@ -27,17 +27,28 @@ Tu es un assistant qui aide à créer un nouveau projet web moderne. Suis ce gui
 
 ## PHASE 1 : COLLECTE D'INFORMATIONS
 
-### Étape 1.1 : Informations de base
+### Étape 1.1 : Détection du nom du projet
 
-Pose ces questions à l'utilisateur UNE PAR UNE en utilisant le tool AskUserQuestion :
+Le nom du projet est le nom du dossier courant (celui dans lequel on travaille).
 
-1. **Nom du projet** : "Comment veux-tu appeler ton projet ?" (ex: mon-app, dashboard-client)
+Utilise `pwd` ou regarde le chemin pour extraire le nom du dossier.
 
-2. **Backend Supabase** : "Tu as besoin d'un backend (base de données, auth, storage) ?"
+Par exemple si le chemin est `/Users/alex/projects/mon-super-projet`, le nom du projet est `mon-super-projet`.
+
+Confirme à l'utilisateur :
+```
+Nom du projet détecté : [NOM_DU_DOSSIER]
+```
+
+### Étape 1.2 : Questions sur le backend
+
+Pose ces questions à l'utilisateur en utilisant le tool AskUserQuestion :
+
+1. **Backend Supabase** : "Tu as besoin d'un backend (base de données, auth, storage) ?"
    - Oui, j'ai besoin d'un backend
    - Non, juste du frontend
 
-3. **Si backend = Oui**, demande :
+2. **Si backend = Oui**, demande :
    - "Tu veux l'authentification utilisateurs ?" (oui/non)
    - "Tu veux le storage de fichiers ?" (oui/non)
 
