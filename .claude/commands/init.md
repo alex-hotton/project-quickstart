@@ -45,6 +45,9 @@ npm install @tanstack/react-query
 # Forms
 npm install react-hook-form zod @hookform/resolvers
 
+# Internationalization (i18n)
+npm install react-i18next i18next i18next-browser-languagedetector
+
 # UI - Tailwind
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
@@ -203,14 +206,28 @@ Crée cette structure :
 ```
 src/
 ├── components/
-│   └── ui/
+│   ├── ui/
+│   ├── layout/
+│   └── features/
 ├── hooks/
 ├── lib/
 │   └── utils.ts
+├── locales/
+│   ├── fr/
+│   │   └── translation.json
+│   ├── en/
+│   │   └── translation.json
+│   ├── de/
+│   │   └── translation.json
+│   └── lu/
+│       └── translation.json
 ├── pages/
 ├── services/
 ├── types/
 └── App.tsx
+
+supabase/
+└── migrations/
 ```
 
 Crée `src/lib/utils.ts` :
@@ -224,7 +241,102 @@ export function cn(...inputs: ClassValue[]) {
 }
 ```
 
-### Étape 2.6 : Configuration TypeScript paths
+### Étape 2.6 : Configuration i18n
+
+Crée `src/lib/i18n.ts` :
+
+```ts
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+
+import fr from '@/locales/fr/translation.json'
+import en from '@/locales/en/translation.json'
+import de from '@/locales/de/translation.json'
+import lu from '@/locales/lu/translation.json'
+
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources: {
+      fr: { translation: fr },
+      en: { translation: en },
+      de: { translation: de },
+      lu: { translation: lu },
+    },
+    fallbackLng: 'fr',
+    interpolation: {
+      escapeValue: false,
+    },
+  })
+
+export default i18n
+```
+
+Crée les fichiers de traduction de base :
+
+`src/locales/fr/translation.json` :
+```json
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour"
+  }
+}
+```
+
+`src/locales/en/translation.json` :
+```json
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back"
+  }
+}
+```
+
+`src/locales/de/translation.json` :
+```json
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Ein Fehler ist aufgetreten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "back": "Zurück"
+  }
+}
+```
+
+`src/locales/lu/translation.json` :
+```json
+{
+  "common": {
+    "loading": "Lueden...",
+    "error": "E Feeler ass opgetrueden",
+    "save": "Späicheren",
+    "cancel": "Ofbriechen",
+    "delete": "Läschen",
+    "edit": "Änneren",
+    "back": "Zréck"
+  }
+}
+```
+
+### Étape 2.7 : Configuration TypeScript paths
 
 Mets à jour `tsconfig.json` pour ajouter :
 
@@ -605,13 +717,14 @@ Dis à l'utilisateur :
 Parfait ! Tout est bien configuré. 🎉
 
 Maintenant, j'ai besoin de comprendre ton projet.
-Partage-moi ton PRD (Product Requirements Document).
+Partage-moi ton PRD (Product Requirements Document) ou décris-moi ton application.
 
 Tu peux :
 - Coller le contenu directement ici
 - Me donner le chemin vers un fichier (ex: ./PRD.md)
 - Me décrire ton projet en détail
 
+C'est juste pour que je comprenne ce qu'on va construire ensemble.
 Plus tu me donnes d'infos, mieux je pourrai t'aider !
 ```
 
@@ -619,14 +732,27 @@ Attends que l'utilisateur fournisse le PRD.
 
 ### Étape 5.3 : Analyse du PRD
 
-Une fois le PRD reçu, analyse-le pour extraire :
-- **Nom du projet** (si différent de celui donné)
-- **Description** courte (1-2 phrases)
-- **Fonctionnalités principales** (liste)
-- **Types d'utilisateurs** (rôles)
-- **Entités/modèles de données** principaux
-- **Pages/écrans** principaux
-- **Intégrations** tierces éventuelles
+Une fois le PRD reçu, **LIS-LE et COMPRENDS-LE** pour pouvoir aider l'utilisateur par la suite.
+
+Le PRD ne va PAS dans le CLAUDE.md. Le CLAUDE.md contient uniquement les conventions génériques.
+
+Le PRD sert à :
+- Comprendre ce que l'utilisateur veut construire
+- Pouvoir proposer des tables Supabase adaptées
+- Savoir quelles pages/composants créer
+- Guider le développement
+
+Confirme à l'utilisateur :
+```
+J'ai bien compris ton projet. Voici ce que je retiens :
+
+- [Résumé en 2-3 phrases]
+- Principales fonctionnalités : [liste]
+- Types d'utilisateurs : [liste]
+
+Le CLAUDE.md avec les conventions génériques est prêt.
+On peut commencer à développer quand tu veux !
+```
 
 ---
 
@@ -634,110 +760,240 @@ Une fois le PRD reçu, analyse-le pour extraire :
 
 ### Étape 6.1 : Création du CLAUDE.md
 
-Crée le fichier `CLAUDE.md` à la racine du projet avec cette structure :
+Crée le fichier `CLAUDE.md` à la racine du projet. Ce fichier contient les **conventions génériques** qui s'appliquent à TOUS les projets. Ne pas y mettre les specs du PRD.
 
 ```markdown
-# [NOM_PROJET]
+# Conventions Projet
 
-> [DESCRIPTION_COURTE]
+## Supabase
 
-## Vue d'ensemble
+- **Project Ref** : `[PROJECT_REF_SUPABASE]`
+- **Dashboard** : https://supabase.com/dashboard/project/[PROJECT_REF_SUPABASE]
 
-[Description plus détaillée du projet en 2-3 paragraphes, basée sur le PRD]
+### Migrations (OBLIGATOIRE)
 
-## Stack technique
-
-- **Frontend** : React 18 + TypeScript + Vite
-- **Styling** : Tailwind CSS + shadcn/ui
-- **Routing** : React Router v6
-- **State** : TanStack Query
-- **Forms** : React Hook Form + Zod
-- **Backend** : Supabase (PostgreSQL, Auth, Storage)
-
-## Structure du projet
+**TOUJOURS** créer un fichier de migration avant de modifier la base de données :
 
 \`\`\`
-src/
-├── components/
-│   ├── ui/              # Composants shadcn/ui
-│   ├── layout/          # Header, Footer, Sidebar, etc.
-│   └── features/        # Composants par fonctionnalité
-├── hooks/               # Custom hooks
-├── lib/                 # Utilitaires
-├── pages/               # Pages de l'app
-├── services/            # API calls, Supabase client
-└── types/               # Types TypeScript
+supabase/migrations/
+└── YYYYMMDDHHMMSS_description.sql
 \`\`\`
 
-## Fonctionnalités
+Exemple : `20250102143000_create_users_table.sql`
 
-[Liste des fonctionnalités extraites du PRD, organisées par priorité]
+**Ne JAMAIS** :
+- Modifier la DB directement via le dashboard sans migration
+- Utiliser le SQL Editor pour des changements permanents
+- Appliquer des modifications sans fichier de migration versionné
 
-### MVP (v1)
-- [ ] Fonctionnalité 1
-- [ ] Fonctionnalité 2
-- [ ] ...
+**Process** :
+1. Créer le fichier de migration dans `supabase/migrations/`
+2. Écrire le SQL (CREATE, ALTER, etc.)
+3. Appliquer via MCP ou `supabase db push`
+4. Commit le fichier de migration
 
-### V2 (après MVP)
-- [ ] Fonctionnalité future 1
-- [ ] ...
+### Row Level Security (RLS)
 
-## Modèle de données
+- Activer RLS sur TOUTES les tables
+- Créer des policies explicites pour chaque opération (SELECT, INSERT, UPDATE, DELETE)
+- Tester les policies avec différents rôles
 
-[Tables Supabase principales, basées sur le PRD]
+## Stack Technique
 
-### Table: [nom_table]
-| Colonne | Type | Description |
-|---------|------|-------------|
-| id | uuid | Identifiant unique |
-| ... | ... | ... |
+| Catégorie | Technologie |
+|-----------|-------------|
+| Build | Vite |
+| Frontend | React 18 + TypeScript |
+| Styling | Tailwind CSS + shadcn/ui |
+| Routing | React Router v6 |
+| State | TanStack Query |
+| Forms | React Hook Form + Zod |
+| Backend | Supabase |
+| i18n | react-i18next |
 
-## Pages principales
+## Internationalisation (i18n)
 
-| Route | Page | Description |
-|-------|------|-------------|
-| `/` | Home | [Description] |
-| `/login` | Login | [Description] |
-| ... | ... | ... |
+L'application doit supporter **4 langues** :
 
-## Conventions de code
+| Code | Langue |
+|------|--------|
+| `fr` | Français (défaut) |
+| `en` | English |
+| `de` | Deutsch |
+| `lu` | Lëtzebuergesch |
 
-### Nommage
-- **Composants** : PascalCase (`UserProfile.tsx`)
-- **Hooks** : camelCase avec préfixe `use` (`useAuth.ts`)
-- **Utilitaires** : camelCase (`formatDate.ts`)
-- **Types** : PascalCase avec suffixe selon contexte (`UserType`, `ApiResponse`)
+### Structure des traductions
+
+\`\`\`
+src/locales/
+├── fr/
+│   └── translation.json
+├── en/
+│   └── translation.json
+├── de/
+│   └── translation.json
+└── lu/
+    └── translation.json
+\`\`\`
+
+### Règles
+
+- **Aucun texte hardcodé** dans les composants
+- Utiliser `useTranslation()` pour tous les textes
+- Clés de traduction en anglais, format dot notation : `common.buttons.submit`
+- Toujours ajouter les 4 langues en même temps
+
+## Responsive Design
+
+L'application doit être **mobile-first** et fonctionner sur :
+
+| Breakpoint | Taille | Usage |
+|------------|--------|-------|
+| `sm` | 640px+ | Mobile large |
+| `md` | 768px+ | Tablette |
+| `lg` | 1024px+ | Desktop |
+| `xl` | 1280px+ | Desktop large |
+
+### Règles
+
+- Commencer par le design mobile
+- Utiliser les classes Tailwind responsive (`sm:`, `md:`, etc.)
+- Tester sur mobile, tablette et desktop
+- Pas de scroll horizontal
+
+## SEO
+
+### Règles
+
+- Chaque page doit avoir un `<title>` unique et descriptif
+- Utiliser les balises `<meta description>` appropriées
+- Structure HTML sémantique (`<header>`, `<main>`, `<nav>`, `<article>`, etc.)
+- Images avec attribut `alt` descriptif
+- URLs propres et lisibles
+- Balises Open Graph pour le partage social
+
+### Composant SEO
+
+Utiliser un composant `<SEO>` pour chaque page :
+
+\`\`\`tsx
+<SEO
+  title="Titre de la page"
+  description="Description pour les moteurs de recherche"
+/>
+\`\`\`
+
+## Qualité du Code
+
+### TypeScript
+
+- **Strict mode** activé
+- Pas de `any` sauf cas exceptionnels documentés
+- Interfaces pour les props de composants
+- Types pour les réponses API
+
+### Conventions de nommage
+
+| Type | Convention | Exemple |
+|------|------------|---------|
+| Composants | PascalCase | `UserProfile.tsx` |
+| Hooks | camelCase + use | `useAuth.ts` |
+| Utilitaires | camelCase | `formatDate.ts` |
+| Types | PascalCase | `UserType` |
+| Constantes | UPPER_SNAKE_CASE | `API_URL` |
 
 ### Imports
-Utiliser les alias `@/` pour tous les imports internes :
+
+Toujours utiliser les alias `@/` :
+
 \`\`\`ts
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
 \`\`\`
 
-### Composants
-- Un composant par fichier
-- Props typées avec interface
-- Utiliser `cn()` pour les classes conditionnelles
+### Structure des composants
 
-## Commandes utiles
+\`\`\`tsx
+// 1. Imports
+import { useState } from 'react'
+
+// 2. Types
+interface Props {
+  title: string
+}
+
+// 3. Composant
+export function MyComponent({ title }: Props) {
+  // 4. Hooks
+  const [state, setState] = useState()
+
+  // 5. Handlers
+  const handleClick = () => {}
+
+  // 6. Render
+  return <div>{title}</div>
+}
+\`\`\`
+
+### Fichiers
+
+- Un composant par fichier
+- Nom du fichier = nom du composant
+- Index files pour les exports groupés
+
+## Structure du Projet
+
+\`\`\`
+src/
+├── components/
+│   ├── ui/              # Composants shadcn/ui (ne pas modifier)
+│   ├── layout/          # Header, Footer, Sidebar
+│   └── features/        # Composants métier par feature
+├── hooks/               # Custom hooks
+├── lib/                 # Utilitaires
+├── locales/             # Fichiers de traduction
+├── pages/               # Pages/routes
+├── services/            # API calls, Supabase client
+└── types/               # Types TypeScript globaux
+\`\`\`
+
+## Commandes
 
 \`\`\`bash
 npm run dev      # Serveur de développement
 npm run build    # Build production
 npm run preview  # Preview du build
+npm run lint     # Linter
 \`\`\`
 
-## Variables d'environnement
+## Variables d'Environnement
 
 | Variable | Description |
 |----------|-------------|
 | `VITE_SUPABASE_URL` | URL du projet Supabase |
 | `VITE_SUPABASE_ANON_KEY` | Clé publique Supabase |
 
-## Notes importantes
+## Git
 
-[Toute information importante spécifique au projet]
+### Commits
+
+Format : `type: description`
+
+Types :
+- `feat:` nouvelle fonctionnalité
+- `fix:` correction de bug
+- `refactor:` refactoring
+- `style:` formatage, CSS
+- `docs:` documentation
+- `test:` tests
+- `chore:` maintenance
+
+### Branches
+
+- `main` : production
+- `develop` : développement
+- `feature/xxx` : nouvelles features
+- `fix/xxx` : corrections
 ```
 
 ### Étape 6.2 : Réinitialisation de App.tsx
@@ -824,23 +1080,26 @@ Affiche :
 ```
 🎉 Projet [NOM_PROJET] initialisé avec succès !
 
-✅ Stack technique configurée
+✅ Stack technique configurée (React, Tailwind, shadcn, i18n...)
 ✅ Supabase connecté et testé
-✅ CLAUDE.md généré avec le contexte du projet
+✅ CLAUDE.md avec les conventions génériques
 ✅ Repo GitHub créé
 
 📁 Fichiers importants :
-   - CLAUDE.md    → Contexte et specs du projet
-   - .env         → Variables d'environnement
-   - .mcp.json    → Configuration MCP Supabase
+   - CLAUDE.md           → Conventions (SEO, i18n, migrations, etc.)
+   - .env                → Variables d'environnement
+   - .mcp.json           → Configuration MCP Supabase
+   - supabase/migrations → Fichiers de migration SQL
+
+🌍 Langues configurées : FR, EN, DE, LU
 
 🚀 Prochaines étapes :
-   1. Lis CLAUDE.md pour comprendre le projet
-   2. Lance `npm run dev` pour démarrer
-   3. Commence à coder !
+   1. Lance `npm run dev` pour démarrer
+   2. Demande-moi de créer les tables Supabase
+   3. Demande-moi de créer les pages/composants
 
-💡 Astuce : Tu peux me demander de créer les tables Supabase,
-   les composants, ou les pages basées sur le CLAUDE.md.
+💡 Rappel : Pour toute modification de la DB,
+   je créerai d'abord un fichier de migration.
 
 Ton repo : https://github.com/[USERNAME]/[NOM_PROJET]
 ```
@@ -853,5 +1112,7 @@ Ton repo : https://github.com/[USERNAME]/[NOM_PROJET]
 - **Attends** la confirmation utilisateur pour les étapes critiques
 - **Adapte** le code selon les choix (avec/sans Supabase, avec/sans auth)
 - **Le test de validation est OBLIGATOIRE** si Supabase est choisi
-- **Le CLAUDE.md doit être riche** et basé sur le PRD fourni
+- **Le CLAUDE.md contient les conventions génériques**, pas les specs du projet
+- **Le PRD sert uniquement à comprendre** ce que l'utilisateur veut construire
+- **Migrations obligatoires** : toujours créer un fichier de migration avant de modifier Supabase
 - Si une erreur survient, explique clairement et propose une solution
