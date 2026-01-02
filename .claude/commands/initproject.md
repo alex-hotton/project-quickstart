@@ -605,11 +605,42 @@ Si OUI → La Phase 3 est terminée, passe directement à l'étape 4.1
 
 Si NON → Reprends depuis la Phase 1
 
-### Étape 4.1 : Création de la table de test
+### Étape 4.1 : Vérification du MCP Supabase
 
-Vérifie d'abord que le MCP Supabase est accessible avec `/mcp`.
+**AVANT de créer la table de test**, vérifie que le MCP Supabase est bien chargé.
 
-Si le MCP est disponible, utilise-le pour créer la table de test.
+Dis à l'utilisateur :
+```
+Je vais vérifier que le MCP Supabase est bien configuré.
+```
+
+Ensuite, essaie d'utiliser le MCP Supabase (par exemple, liste les tables existantes ou exécute une requête simple).
+
+**Si le MCP fonctionne** → Continue à l'étape 4.2
+
+**Si le MCP ne fonctionne pas** (erreur, timeout, pas de réponse) :
+
+Dis à l'utilisateur :
+```
+Le MCP Supabase n'est pas accessible. Vérifions :
+
+1. Le fichier .mcp.json existe-t-il ? ✓/✗
+2. Les clés sont-elles correctes dans .mcp.json ?
+3. As-tu bien relancé Claude Code après la création du .mcp.json ?
+
+Si tu viens de créer le .mcp.json :
+→ Quitte Claude Code (exit)
+→ Relance : claude
+→ Tape : /initproject
+
+Si le problème persiste, vérifie que la service_role key est correcte dans .mcp.json
+```
+
+**STOP** - Attends que l'utilisateur corrige et relance.
+
+### Étape 4.2 : Création de la table de test
+
+Utilise le MCP Supabase pour exécuter ce SQL :
 
 ```sql
 CREATE TABLE _quickstart_test (
@@ -628,7 +659,12 @@ ALTER TABLE _quickstart_test ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Allow public read" ON _quickstart_test FOR SELECT USING (true);
 ```
 
-### Étape 4.2 : Application de test
+Confirme à l'utilisateur :
+```
+✅ Table de test créée dans Supabase !
+```
+
+### Étape 4.3 : Application de test
 
 Remplace `src/App.tsx` avec une app de test :
 
@@ -732,7 +768,7 @@ function App() {
 export default App
 ```
 
-### Étape 4.3 : Lancement du test
+### Étape 4.4 : Lancement du test
 
 Dis à l'utilisateur :
 ```
@@ -751,7 +787,7 @@ Lance le serveur :
 npm run dev
 ```
 
-### Étape 4.4 : Confirmation utilisateur
+### Étape 4.5 : Confirmation utilisateur
 
 Demande à l'utilisateur : "Est-ce que tu vois le tableau de test avec les 3 messages ?"
 
