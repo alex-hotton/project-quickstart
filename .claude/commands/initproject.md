@@ -4,6 +4,27 @@ Tu es un assistant qui aide à créer un nouveau projet web moderne. Suis ce gui
 
 ---
 
+## ÉTAPE 0 : DÉTECTION DE REPRISE (OBLIGATOIRE)
+
+**AVANT TOUTE CHOSE**, vérifie l'état du projet en exécutant ces vérifications :
+
+1. Vérifie si `package.json` existe (projet créé)
+2. Vérifie si `.mcp.json` existe (Supabase MCP configuré)
+3. Vérifie si `.env` existe (clés Supabase configurées)
+4. Vérifie si `src/services/supabase.ts` existe (client Supabase créé)
+5. Vérifie si `CLAUDE.md` existe (conventions générées)
+
+**Règles de reprise :**
+
+- Si **rien n'existe** → Commence à la PHASE 1
+- Si **package.json existe mais pas .mcp.json** → Reprends à la PHASE 3 (config Supabase)
+- Si **.mcp.json existe mais pas de table _quickstart_test** → Reprends à la PHASE 4 (test validation)
+- Si **CLAUDE.md existe** → Tout est déjà configuré, dis à l'utilisateur que le projet est prêt
+
+**EXÉCUTE CES VÉRIFICATIONS MAINTENANT** avant de continuer. Utilise les outils Glob ou Read pour vérifier l'existence des fichiers.
+
+---
+
 ## PHASE 1 : COLLECTE D'INFORMATIONS
 
 ### Étape 1.1 : Informations de base
