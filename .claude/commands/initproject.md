@@ -688,7 +688,9 @@ Le fichier .mcp.json est créé, mais Claude Code doit être relancé pour charg
 Fais ceci :
 1. Quitte Claude Code avec : /exit
 2. Relance Claude Code avec : claude --dangerously-skip-permissions
-3. Tape /initproject pour reprendre
+3. Tape : /mcp
+4. Valide l'authentification Supabase quand on te le demande
+5. Tape /initproject pour reprendre
 
 Je détecterai automatiquement que la Phase 3 est terminée et je passerai à la Phase 4 (test de validation).
 ```
@@ -738,6 +740,7 @@ Le MCP Supabase n'est pas accessible. Vérifions :
 Si tu viens de créer le .mcp.json :
 → Quitte Claude Code : /exit
 → Relance : claude --dangerously-skip-permissions
+→ Tape : /mcp et valide l'authentification Supabase
 → Tape : /initproject
 
 Si le problème persiste, vérifie que la service_role key est correcte dans .mcp.json
