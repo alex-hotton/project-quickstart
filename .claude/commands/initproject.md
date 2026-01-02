@@ -69,23 +69,151 @@ rm -f README.md
 
 Garde le dossier `.claude/commands/` car il contient ce script.
 
-### Étape 2.2 : Création du projet Vite
+### Étape 2.2 : Création du projet (manuel)
 
-Initialise le projet Vite dans le dossier courant :
+**NOTE** : On ne peut PAS utiliser `npm create vite` car le dossier n'est pas vide (il contient .git et .claude).
+On crée donc le projet manuellement.
 
-```bash
-npm create vite@latest . -- --template react-ts
+Crée le fichier `package.json` :
+
+```json
+{
+  "name": "[NOM_PROJET]",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  }
+}
 ```
 
-Note : Le `.` indique le dossier courant. Vite va demander confirmation car le dossier n'est pas vide - réponds "y".
+Crée le fichier `index.html` à la racine :
 
-```bash
-npm install
+```html
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>[NOM_PROJET]</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
+
+Crée `src/main.tsx` :
+
+```tsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+```
+
+Crée `src/App.tsx` (temporaire, sera remplacé plus tard) :
+
+```tsx
+function App() {
+  return (
+    <div>
+      <h1>Setup en cours...</h1>
+    </div>
+  )
+}
+
+export default App
+```
+
+Crée `src/vite-env.d.ts` :
+
+```ts
+/// <reference types="vite/client" />
+```
+
+Crée `tsconfig.json` :
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+```
+
+Crée `tsconfig.node.json` :
+
+```json
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true
+  },
+  "include": ["vite.config.ts"]
+}
+```
+
+Crée `vite.config.ts` :
+
+```ts
+import path from "path"
+import react from "@vitejs/plugin-react"
+import { defineConfig } from "vite"
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+})
 ```
 
 ### Étape 2.3 : Installation des dépendances
 
 ```bash
+# Core Vite + React + TypeScript
+npm install react react-dom
+npm install -D vite @vitejs/plugin-react typescript @types/react @types/react-dom
+
 # Routing
 npm install react-router-dom
 
@@ -384,38 +512,6 @@ Crée les fichiers de traduction de base :
     "back": "Zréck"
   }
 }
-```
-
-### Étape 2.7 : Configuration TypeScript paths
-
-Mets à jour `tsconfig.json` pour ajouter :
-
-```json
-{
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-```
-
-Remplace `vite.config.ts` :
-
-```ts
-import path from "path"
-import react from "@vitejs/plugin-react"
-import { defineConfig } from "vite"
-
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-})
 ```
 
 ### Étape 2.7 : Création du .gitignore
