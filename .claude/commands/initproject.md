@@ -531,22 +531,46 @@ Crée le fichier `.mcp.json` à la racine :
 
 Remplace les valeurs par celles récupérées à l'étape 3.2.
 
+### Étape 3.7 : Rechargement de Claude Code pour activer le MCP
+
+**IMPORTANT** : Le MCP Supabase est chargé au démarrage de Claude Code. Comme on vient de créer le `.mcp.json`, il faut relancer Claude Code.
+
+Dis à l'utilisateur :
+```
+Le fichier .mcp.json est créé, mais Claude Code doit être relancé pour charger le MCP Supabase.
+
+Fais ceci :
+1. Quitte Claude Code (Ctrl+C ou tape "exit")
+2. Relance Claude Code avec : claude
+3. Tape /initproject pour reprendre
+
+Je détecterai automatiquement que la Phase 3 est terminée et je passerai à la Phase 4 (test de validation).
+```
+
+**STOP ICI** - Attends que l'utilisateur relance Claude Code.
+
 ---
 
 ## PHASE 4 : TEST DE VALIDATION (si Supabase)
 
 **IMPORTANT** : Cette phase vérifie que tout est bien configuré avant de commencer le vrai projet.
 
+### Étape 4.0 : Détection de reprise
+
+Au démarrage, vérifie si :
+- Le fichier `.mcp.json` existe
+- Le fichier `.env` existe avec les clés Supabase
+- Le fichier `src/services/supabase.ts` existe
+
+Si OUI → La Phase 3 est terminée, passe directement à l'étape 4.1
+
+Si NON → Reprends depuis la Phase 1
+
 ### Étape 4.1 : Création de la table de test
 
-Dis à l'utilisateur :
-```
-Je vais créer une table de test dans Supabase pour vérifier que tout fonctionne.
-Assure-toi que Claude Code a bien accès au MCP Supabase.
-Tu peux vérifier avec la commande /mcp
-```
+Vérifie d'abord que le MCP Supabase est accessible avec `/mcp`.
 
-Utilise le MCP Supabase pour créer une table de test :
+Si le MCP est disponible, utilise-le pour créer la table de test.
 
 ```sql
 CREATE TABLE _quickstart_test (
