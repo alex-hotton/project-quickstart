@@ -14,12 +14,12 @@ Crée un projet web moderne en quelques minutes avec Claude Code. Setup complet,
 | **Forms** | React Hook Form + Zod |
 | **Backend** | Supabase (optionnel) |
 
-## Ce que fait `/init`
+## Ce que fait `/initproject`
 
 ```
 PHASE 1 → Questions (nom du projet, besoin backend ?)
     ↓
-PHASE 2 → Setup technique (Vite, React, Tailwind, etc.)
+PHASE 2 → Setup technique (Vite, React, Tailwind, i18n, etc.)
     ↓
 PHASE 3 → Config Supabase (si demandé)
     ↓
@@ -27,7 +27,7 @@ PHASE 4 → Test de validation (mini-app qui affiche une table Supabase)
     ↓
 PHASE 5 → Demande ton PRD et nettoie la table de test
     ↓
-PHASE 6 → Génère CLAUDE.md basé sur ton PRD
+PHASE 6 → Génère CLAUDE.md (conventions génériques)
     ↓
 PHASE 7 → Crée le repo GitHub et push
 ```
@@ -56,7 +56,7 @@ claude
 ### 3. Exécute la commande
 
 ```
-/init
+/initproject
 ```
 
 ### 4. Suis les étapes
