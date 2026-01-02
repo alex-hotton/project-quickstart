@@ -573,17 +573,27 @@ Demande à l'utilisateur : "Est-ce que tu as déjà créé ton projet Supabase ?
 
 ### Étape 3.2 : Récupération des clés
 
-Demande les clés une par une :
+Dis à l'utilisateur :
+```
+J'ai besoin de 3 informations de ton projet Supabase :
 
-1. "Quelle est l'URL de ton projet Supabase ?"
-   - (Se trouve dans **Settings > Data API**, format: `https://xxx.supabase.co`)
+1. URL du projet
+   → Settings > Data API
+   → Copie l'URL (format: https://xxx.supabase.co)
 
-2. "Quelle est ta clé anon/public ?"
-   - (Se trouve dans **API Keys > Legacy**, clé "anon", commence par `eyJ...`)
+2. Clé anon/public
+   → API Keys > Legacy
+   → Copie la clé "anon" (commence par eyJ...)
 
-3. "Quel est ton Access Token Supabase ?" (pour le MCP)
-   - (Se génère sur https://supabase.com/dashboard/account/tokens)
-   - Clique sur "Generate new token", donne un nom, et copie le token (commence par `sbp_...`)
+3. Access Token (pour le MCP)
+   → Va sur https://supabase.com/dashboard/account/tokens
+   → Clique "Generate new token", donne un nom
+   → Copie le token (commence par sbp_...)
+
+Colle-moi ces 3 valeurs !
+```
+
+Attends que l'utilisateur fournisse les 3 valeurs.
 
 ### Étape 3.3 : Création du .env
 
