@@ -1,6 +1,6 @@
 # Project Quickstart
 
-Crée un projet web moderne en 2 minutes avec Claude Code.
+Crée un projet web moderne en quelques minutes avec Claude Code. Setup complet, testé, prêt à développer.
 
 ## Stack incluse
 
@@ -14,11 +14,29 @@ Crée un projet web moderne en 2 minutes avec Claude Code.
 | **Forms** | React Hook Form + Zod |
 | **Backend** | Supabase (optionnel) |
 
+## Ce que fait `/init`
+
+```
+PHASE 1 → Questions (nom du projet, besoin backend ?)
+    ↓
+PHASE 2 → Setup technique (Vite, React, Tailwind, etc.)
+    ↓
+PHASE 3 → Config Supabase (si demandé)
+    ↓
+PHASE 4 → Test de validation (mini-app qui affiche une table Supabase)
+    ↓
+PHASE 5 → Demande ton PRD et nettoie la table de test
+    ↓
+PHASE 6 → Génère CLAUDE.md basé sur ton PRD
+    ↓
+PHASE 7 → Crée le repo GitHub et push
+```
+
 ## Prérequis
 
 - [Node.js](https://nodejs.org/) 18+
 - [Claude Code](https://claude.com/code) installé
-- [GitHub CLI](https://cli.github.com/) (optionnel, pour créer le repo automatiquement)
+- [GitHub CLI](https://cli.github.com/) (pour créer le repo automatiquement)
 
 ## Utilisation
 
@@ -35,32 +53,25 @@ cd mon-projet
 claude
 ```
 
-### 3. Exécute la commande d'initialisation
+### 3. Exécute la commande
 
 ```
 /init
 ```
 
-### 4. Réponds aux questions
-
-Claude Code va te demander :
-- Le nom de ton projet
-- Une description
-- Si tu veux un backend Supabase
-- Si tu veux l'authentification
-- Si tu veux le storage fichiers
-
-### 5. C'est prêt !
+### 4. Suis les étapes
 
 Claude Code va :
-- Installer toutes les dépendances
-- Configurer Tailwind + shadcn/ui
-- Créer la structure de dossiers
-- Configurer Supabase (si demandé)
-- Créer le repo GitHub
-- Push le premier commit
 
-## Ce que tu obtiens
+1. **Te poser des questions** : nom du projet, besoin d'un backend ?
+2. **Setup le projet** : installe tout, configure Tailwind, shadcn, etc.
+3. **Configurer Supabase** : te guide pour créer le projet et récupérer les clés
+4. **Tester la connexion** : crée une mini-app qui affiche une table de test
+5. **Demander ton PRD** : pour comprendre ce que tu veux construire
+6. **Générer CLAUDE.md** : le contexte complet du projet pour Claude Code
+7. **Créer le repo GitHub** : et push le premier commit
+
+## Résultat final
 
 ```
 mon-projet/
@@ -74,6 +85,7 @@ mon-projet/
 │   ├── services/         # Supabase client
 │   ├── types/            # Types TypeScript
 │   └── App.tsx
+├── CLAUDE.md             # ⭐ Contexte du projet basé sur ton PRD
 ├── .env                  # Variables d'environnement
 ├── .mcp.json            # Config MCP Supabase
 ├── tailwind.config.js
@@ -81,7 +93,21 @@ mon-projet/
 └── README.md
 ```
 
-## Configuration Supabase (optionnel)
+## Le fichier CLAUDE.md
+
+C'est le fichier le plus important. Il contient :
+
+- Description du projet
+- Stack technique
+- Structure des dossiers
+- Fonctionnalités (MVP et futures)
+- Modèle de données
+- Routes/pages
+- Conventions de code
+
+Claude Code le lit automatiquement et comprend ton projet.
+
+## Configuration Supabase
 
 Si tu choisis d'utiliser Supabase, tu auras besoin de :
 
@@ -89,7 +115,7 @@ Si tu choisis d'utiliser Supabase, tu auras besoin de :
 2. **Récupérer tes clés** dans Settings > API :
    - `VITE_SUPABASE_URL` : URL du projet
    - `VITE_SUPABASE_ANON_KEY` : Clé anon/public
-   - `service_role key` : Pour le MCP (optionnel)
+   - `service_role key` : Pour le MCP
 
 ## Commandes disponibles
 
