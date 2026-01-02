@@ -581,8 +581,9 @@ Demande les clés une par une :
 2. "Quelle est ta clé anon/public ?"
    - (Se trouve dans **API Keys > Legacy**, clé "anon", commence par `eyJ...`)
 
-3. "Quelle est ta clé service_role ?" (pour le MCP)
-   - (Se trouve dans **API Keys > Legacy**, clé "service_role")
+3. "Quel est ton Access Token Supabase ?" (pour le MCP)
+   - (Se génère sur https://supabase.com/dashboard/account/tokens)
+   - Clique sur "Generate new token", donne un nom, et copie le token (commence par `sbp_...`)
 
 ### Étape 3.3 : Création du .env
 
@@ -665,17 +666,15 @@ Crée le fichier `.mcp.json` à la racine :
       "args": [
         "-y",
         "@supabase/mcp-server-supabase@latest",
-        "--supabase-url",
-        "URL_SUPABASE_ICI",
-        "--supabase-key",
-        "CLE_SERVICE_ROLE_ICI"
+        "--access-token",
+        "ACCESS_TOKEN_ICI"
       ]
     }
   }
 }
 ```
 
-Remplace les valeurs par celles récupérées à l'étape 3.2.
+Remplace `ACCESS_TOKEN_ICI` par le token récupéré à l'étape 3.2 (commence par `sbp_...`).
 
 ### Étape 3.7 : Rechargement de Claude Code pour activer le MCP
 
