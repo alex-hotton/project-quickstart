@@ -40,12 +40,14 @@ PHASE 7 → Crée le repo GitHub et push
 
 ## Utilisation
 
-### 1. Clone ce repo
+### 1. Clone ce repo avec le nom de ton projet
 
 ```bash
-git clone https://github.com/alex-hotton/project-quickstart.git mon-projet
-cd mon-projet
+git clone https://github.com/alex-hotton/project-quickstart.git nom-de-ton-projet
+cd nom-de-ton-projet
 ```
+
+Le dossier cloné sera transformé en ton projet (pas de nouveau dossier créé).
 
 ### 2. Lance Claude Code
 

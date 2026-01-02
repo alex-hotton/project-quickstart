@@ -45,16 +45,34 @@ Pose ces questions à l'utilisateur UNE PAR UNE en utilisant le tool AskUserQues
 
 ## PHASE 2 : SETUP TECHNIQUE
 
-### Étape 2.1 : Création du projet Vite
+### Étape 2.1 : Nettoyage et préparation
+
+**IMPORTANT** : On travaille dans le dossier COURANT (celui cloné depuis project-quickstart).
+
+D'abord, supprime les fichiers template qui ne sont plus nécessaires :
 
 ```bash
-cd ..
-npm create vite@latest [NOM_PROJET] -- --template react-ts
-cd [NOM_PROJET]
+rm -rf templates/
+rm -f README.md
+```
+
+Garde le dossier `.claude/commands/` car il contient ce script.
+
+### Étape 2.2 : Création du projet Vite
+
+Initialise le projet Vite dans le dossier courant :
+
+```bash
+npm create vite@latest . -- --template react-ts
+```
+
+Note : Le `.` indique le dossier courant. Vite va demander confirmation car le dossier n'est pas vide - réponds "y".
+
+```bash
 npm install
 ```
 
-### Étape 2.2 : Installation des dépendances
+### Étape 2.3 : Installation des dépendances
 
 ```bash
 # Routing
