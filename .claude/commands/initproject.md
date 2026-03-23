@@ -669,7 +669,7 @@ Fais ceci :
 1. Quitte Claude Code avec : /exit
 2. Dans ton terminal, exécute cette commande :
 
-   claude mcp add --transport http supabase https://mcp.supabase.com/mcp
+   claude mcp add --scope project --transport http supabase "https://mcp.supabase.com/mcp"
 
 3. Relance Claude Code avec : claude --dangerously-skip-permissions
 4. Tape : /mcp
@@ -719,13 +719,13 @@ Dis à l'utilisateur :
 Le MCP Supabase n'est pas accessible. Vérifions :
 
 1. As-tu bien exécuté la commande ?
-   → claude mcp add --transport http supabase https://mcp.supabase.com/mcp
+   → claude mcp add --scope project --transport http supabase "https://mcp.supabase.com/mcp"
 2. As-tu bien relancé Claude Code après ?
 3. As-tu validé l'authentification Supabase dans le navigateur via /mcp ?
 
 Si ce n'est pas encore fait :
 → Quitte Claude Code : /exit
-→ Exécute : claude mcp add --transport http supabase https://mcp.supabase.com/mcp
+→ Exécute : claude mcp add --scope project --transport http supabase "https://mcp.supabase.com/mcp"
 → Relance : claude --dangerously-skip-permissions
 → Tape : /mcp et valide l'authentification Supabase dans le navigateur
 → Tape : /initproject
