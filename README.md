@@ -1,134 +1,132 @@
-# Project Quickstart
+# project-quickstart
 
-Crée un projet web moderne en quelques minutes avec Claude Code. Setup complet, testé, prêt à développer.
+Template pour démarrer un projet web moderne avec Claude Code.
 
-## Stack incluse
+**Stack** : React 18 + TypeScript + Vite + Tailwind + shadcn/ui + i18n (4 langues) + Supabase + React Router + TanStack Query + React Hook Form + Zod.
 
-| Catégorie | Technologies |
-|-----------|-------------|
-| **Build** | Vite |
-| **Frontend** | React 18 + TypeScript |
-| **Styling** | Tailwind CSS + shadcn/ui |
-| **Routing** | React Router v6 |
-| **Data** | TanStack Query |
-| **Forms** | React Hook Form + Zod |
-| **Backend** | Supabase (optionnel) |
+---
 
-## Ce que fait `/initproject`
+## Démarrer
+
+```bash
+gh repo clone alex-hotton/project-quickstart mon-projet
+cd mon-projet
+claude --dangerously-skip-permissions
+```
+
+Puis dans Claude Code, **un seul point d'entrée** :
+
+- `/initproject` — setup standard (rapide, projet simple)
+- `/initprojectadvanced` — setup standard **+ 7 skills + workflow PRD-first dès l'init**
+
+Pas d'autre commande à apprendre. Claude te guide pour les clés Supabase et la suite.
+
+**Redémarrages de Claude Code attendus** : les MCP et les skills sont chargés au boot du CLI uniquement. Tu vas relancer Claude Code une fois pendant `/initproject` (après le MCP Supabase) et **deux fois** pendant `/initprojectadvanced` (MCP Supabase + skills). À chaque restart, retape la même commande — la détection de Phase 0 reprend automatiquement où tu en étais.
+
+---
+
+## Quelle version choisir ?
+
+Les deux commandes posent le **même setup technique** : stack identique, structure de doc identique (OpenAI Harness), `CLAUDE.md` avec les deux principes d'ingénierie inscrits, repo GitHub privé.
+
+`/initprojectadvanced` ajoute **7 skills + un workflow PRD-first dès le premier jour** :
+
+| Skill | À quoi ça sert |
+|---|---|
+| `grill-me` | Interroge l'utilisateur jusqu'à compréhension partagée d'une idée |
+| `tdd` | Test-driven development discipliné (red-green-refactor vertical) |
+| `improve-codebase-architecture` | Refactor en deep modules + maintient `CONTEXT.md` |
+| `to-prd` | Synthétise une conversation en PRD GitHub issue |
+| `to-issues` | Découpe un PRD en issues GitHub vertical-slice |
+| `supabase-postgres-best-practices` | Schémas, indexes, RLS, perf Postgres |
+| `frontend-design` | UI distinctive (anti-générique IA) |
+
+**Différence clé du flow** : `/initproject` te demande "colle ton PRD ou décris-moi ton projet" et s'arrête au push GitHub. `/initprojectadvanced` enchaîne :
+
+1. **Phase 7** — invoque `grill-me` (interview rigoureuse) puis `to-prd` (PRD publié comme GitHub issue)
+2. **Phase 10** — invoque `to-issues` qui découpe le PRD en GitHub issues vertical-slice
+3. **Phase 11** — invoque `tdd` pour livrer la **première feature** en red-green-refactor + ouvre une PR
+
+Tu termines `/initprojectadvanced` avec : un repo GitHub privé, un PRD documenté, des issues prêtes à attaquer, **une feature livrée en TDD**, et 4 des 5 skills méthodo déjà utilisés en pratique.
+
+**Recommandation** : `/initprojectadvanced` par défaut. Tu apprends la méthodo en livrant du code réel, sur ton vrai projet.
+
+---
+
+## Comment les skills sont installés (advanced)
+
+`git clone --depth 1` des 3 repos upstream open-source dans `/tmp`, puis `cp -r` des 7 dossiers de skills dans `.claude/skills/`. Pas de CLI tiers, pas de menu interactif. Toujours la dernière version au moment de l'init. Pour refaire l'install plus tard, relance la phase 5 du command file.
+
+Skills installés (licences open-source préservées dans chaque dossier) :
+- 5 skills méthodo : `grill-me`, `tdd`, `improve-codebase-architecture`, `to-prd`, `to-issues` (+ `grill-with-docs` en référence interne)
+- 1 skill SQL/RLS : `supabase-postgres-best-practices`
+- 1 skill UI : `frontend-design`
+
+---
+
+## Structure générée
 
 ```
-PHASE 1 → Questions (nom du projet, besoin backend ?)
-    ↓
-PHASE 2 → Setup technique (Vite, React, Tailwind, i18n, etc.)
-    ↓
-PHASE 3 → Config Supabase (si demandé)
-    ↓
-PHASE 4 → Test de validation (mini-app qui affiche une table Supabase)
-    ↓
-PHASE 5 → Demande ton PRD et nettoie la table de test
-    ↓
-PHASE 6 → Génère CLAUDE.md (conventions génériques)
-    ↓
-PHASE 7 → Crée le repo GitHub et push
+CLAUDE.md                         # principes [+ méthodologie + skills si advanced] + table des matières
+ARCHITECTURE.md                   # vue système
+CONTEXT.md                        # vocabulaire de domaine (advanced)
+docs/
+├── DESIGN.md                     # design system, responsive, SEO
+├── FRONTEND.md                   # TS conventions, components, i18n
+├── PRODUCT_SENSE.md              # pointer vers le PRD GitHub issue
+├── QUALITY_SCORE.md              # lint/typecheck/build/test gates
+├── RELIABILITY.md                # error handling, observability
+├── SECURITY.md                   # RLS, auth, secrets, migrations
+├── PLANS.md                      # index des plans d'exécution
+├── design-docs/index.md          # design docs longs
+├── exec-plans/{active,completed}/
+├── exec-plans/tech-debt-tracker.md
+├── adr/README.md                 # architectural decision records
+├── product-specs/index.md        # index des PRDs (GitHub issues)
+├── generated/README.md           # artefacts auto-générés
+└── references/README.md          # llms.txt externes, docs de libs
+
+src/
+├── components/{ui,layout,features}/
+├── hooks/, lib/, locales/, pages/, services/, types/
+
+supabase/migrations/
 ```
+
+---
+
+## Ce que contient le `CLAUDE.md` généré
+
+`CLAUDE.md` est lu par Claude au début de chaque session. C'est le **système nerveux** du projet.
+
+**Les deux versions** y inscrivent :
+
+- **Principle 1 — Documentation is the source of truth** : Claude met à jour la doc dans le même commit que le code. Le contenu thématique vit dans `docs/*.md`.
+- **Principle 2 — Verify before you ask** : Claude lance `tsc`, `npm run lint`, `npm run build`, ouvre Chrome, etc. avant de demander à l'utilisateur de valider. L'utilisateur n'est sollicité que pour les choix produit, l'esthétique, ou l'ambiguïté métier.
+- **Documentation map** : liens vers `ARCHITECTURE.md`, `CONTEXT.md`, et chaque `docs/*.md` thématique.
+
+**`/initprojectadvanced` ajoute en plus** dans `CLAUDE.md` :
+
+- **Methodology** : workflow 5 stages (`grill-me` → `to-prd` → `to-issues` → `tdd` → `improve-codebase-architecture`), quand invoquer chaque skill, anti-hallucinations LLM, "ask the AI for / don't ask the AI for".
+- **Skills installed** : table des 7 skills + conventions (issue tracker GitHub, label `needs-triage`).
+
+Pas de fichier `METHODOLOGY.md` séparé — tout est dans `CLAUDE.md` pour que Claude ait l'info à chaque session sans aller la chercher.
+
+---
 
 ## Prérequis
 
-- [Node.js](https://nodejs.org/) 18+
-- [Claude Code](https://claude.com/code) installé
-- [GitHub CLI](https://cli.github.com/) (pour créer le repo automatiquement)
+- Node 20+
+- `git` (pour le clone des skills)
+- `gh` CLI authentifié (`gh auth login`)
+- Compte Supabase si tu veux un backend (optionnel)
 
-## Utilisation
+---
 
-### 1. Clone ce repo avec le nom de ton projet
-
-```bash
-git clone https://github.com/alex-hotton/project-quickstart.git nom-de-ton-projet
-cd nom-de-ton-projet
-```
-
-Le dossier cloné sera transformé en ton projet (pas de nouveau dossier créé).
-
-### 2. Lance Claude Code
-
-```bash
-claude
-```
-
-### 3. Exécute la commande
+## Workflow recommandé (après `/initprojectadvanced`)
 
 ```
-/initproject
+nouvelle feature → grill-me → to-prd → to-issues → tdd → QA
 ```
 
-### 4. Suis les étapes
-
-Claude Code va :
-
-1. **Te poser des questions** : nom du projet, besoin d'un backend ?
-2. **Setup le projet** : installe tout, configure Tailwind, shadcn, etc.
-3. **Configurer Supabase** : te guide pour créer le projet et récupérer les clés
-4. **Tester la connexion** : crée une mini-app qui affiche une table de test
-5. **Demander ton PRD** : pour comprendre ce que tu veux construire
-6. **Générer CLAUDE.md** : le contexte complet du projet pour Claude Code
-7. **Créer le repo GitHub** : et push le premier commit
-
-## Résultat final
-
-```
-mon-projet/
-├── src/
-│   ├── components/
-│   │   └── ui/           # Composants shadcn/ui
-│   ├── hooks/            # Custom hooks (+ useAuth si Supabase)
-│   ├── lib/
-│   │   └── utils.ts      # Utilitaires
-│   ├── pages/            # Pages de l'app
-│   ├── services/         # Supabase client
-│   ├── types/            # Types TypeScript
-│   └── App.tsx
-├── CLAUDE.md             # ⭐ Contexte du projet basé sur ton PRD
-├── .env                  # Variables d'environnement
-├── .mcp.json            # Config MCP Supabase
-├── tailwind.config.js
-├── vite.config.ts
-└── README.md
-```
-
-## Le fichier CLAUDE.md
-
-C'est le fichier le plus important. Il contient :
-
-- Description du projet
-- Stack technique
-- Structure des dossiers
-- Fonctionnalités (MVP et futures)
-- Modèle de données
-- Routes/pages
-- Conventions de code
-
-Claude Code le lit automatiquement et comprend ton projet.
-
-## Configuration Supabase
-
-Si tu choisis d'utiliser Supabase, tu auras besoin de :
-
-1. **Créer un projet** sur [supabase.com](https://supabase.com)
-2. **Récupérer tes clés** dans Settings > API :
-   - `VITE_SUPABASE_URL` : URL du projet
-   - `VITE_SUPABASE_ANON_KEY` : Clé anon/public
-   - `service_role key` : Pour le MCP
-
-## Commandes disponibles
-
-Une fois ton projet créé :
-
-```bash
-npm run dev      # Démarre le serveur de dev
-npm run build    # Build pour la production
-npm run preview  # Preview du build
-```
-
-## Support
-
-Des questions ? Ouvre une issue sur ce repo.
+Détaillée dans la section **Methodology** du `CLAUDE.md` du projet généré (advanced uniquement).

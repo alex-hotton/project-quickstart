@@ -244,7 +244,7 @@ Si backend Supabase :
 npm install @supabase/supabase-js
 ```
 
-### Étape 2.3 : Configuration Tailwind
+### Étape 2.4 : Configuration Tailwind
 
 Remplace `tailwind.config.js` :
 
@@ -311,7 +311,7 @@ export default {
 }
 ```
 
-### Étape 2.4 : Configuration CSS
+### Étape 2.5 : Configuration CSS
 
 Remplace `src/index.css` :
 
@@ -377,7 +377,7 @@ Remplace `src/index.css` :
 }
 ```
 
-### Étape 2.5 : Structure des dossiers
+### Étape 2.6 : Structure des dossiers
 
 Crée cette structure :
 
@@ -419,7 +419,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 ```
 
-### Étape 2.6 : Configuration i18n
+### Étape 2.7 : Configuration i18n
 
 Crée `src/lib/i18n.ts` :
 
@@ -514,7 +514,7 @@ Crée les fichiers de traduction de base :
 }
 ```
 
-### Étape 2.7 : Création du .gitignore
+### Étape 2.8 : Création du .gitignore
 
 ```gitignore
 # Dependencies
@@ -928,13 +928,10 @@ Attends que l'utilisateur fournisse le PRD.
 
 Une fois le PRD reçu, **LIS-LE et COMPRENDS-LE** pour pouvoir aider l'utilisateur par la suite.
 
-Le PRD ne va PAS dans le CLAUDE.md. Le CLAUDE.md contient uniquement les conventions génériques.
-
-Le PRD sert à :
-- Comprendre ce que l'utilisateur veut construire
-- Pouvoir proposer des tables Supabase adaptées
-- Savoir quelles pages/composants créer
-- Guider le développement
+Extrait :
+- **Une description courte** (1-2 phrases) — elle ira en haut du `CLAUDE.md`
+- Les fonctionnalités principales
+- Les types d'utilisateurs
 
 Confirme à l'utilisateur :
 ```
@@ -944,179 +941,226 @@ J'ai bien compris ton projet. Voici ce que je retiens :
 - Principales fonctionnalités : [liste]
 - Types d'utilisateurs : [liste]
 
-Le CLAUDE.md avec les conventions génériques est prêt.
-On peut commencer à développer quand tu veux !
+Je prépare maintenant la documentation du projet.
 ```
 
 ---
 
-## PHASE 6 : GÉNÉRATION DU CLAUDE.md
+## PHASE 6 : GÉNÉRATION DE LA DOCUMENTATION
 
-### Étape 6.1 : Création du CLAUDE.md
+La doc suit la structure **OpenAI Harness Engineering** : `CLAUDE.md` à la racine est une table des matières, le contenu réel vit dans `docs/*.md` thématiques. Pas de mur de texte dans CLAUDE.md.
 
-Crée le fichier `CLAUDE.md` à la racine du projet. Ce fichier contient les **conventions génériques** qui s'appliquent à TOUS les projets. Ne pas y mettre les specs du PRD.
+### Étape 6.1 : Création de l'arborescence docs
+
+Crée la structure complète :
+
+```bash
+mkdir -p docs/design-docs docs/exec-plans/active docs/exec-plans/completed docs/generated docs/product-specs docs/references docs/adr
+```
+
+### Étape 6.2 : Création de `CLAUDE.md`
+
+Crée le fichier `CLAUDE.md` à la racine :
 
 ```markdown
-# Conventions Projet
+# [NOM_PROJET]
 
-## Supabase
+[DESCRIPTION_COURTE_DU_PROJET — 1-2 lignes extraites du PRD]
 
-- **Project Ref** : `[PROJECT_REF_SUPABASE]`
-- **Dashboard** : https://supabase.com/dashboard/project/[PROJECT_REF_SUPABASE]
+---
 
-### Migrations (OBLIGATOIRE)
+## Principles
 
-**TOUJOURS** créer un fichier de migration avant de modifier la base de données :
+### 1. Documentation is the source of truth
+
+Update docs in the same commit as the code. A change without a doc update is incomplete.
+
+- `CLAUDE.md` is principles + table of contents. Nothing else.
+- `ARCHITECTURE.md` is the system at a glance.
+- One topic per file in `docs/`. Lead with the why, then the how.
+- Short sections, concrete examples, no padding.
+- Decisions go in `docs/adr/`. Active plans in `docs/exec-plans/active/`, archived to `completed/` when done.
+- Generated artifacts in `docs/generated/` are regenerated, never hand-edited.
+- Add a doc → link it from this file. Touch a feature → update its doc.
+
+### 2. Verify before you ask
+
+Use your tools before asking the user to test, review, or confirm. The user is for judgment calls, not for what you can check yourself.
+
+| You changed... | Run...                                           |
+|----------------|--------------------------------------------------|
+| TS code        | `tsc --noEmit`, `npm run lint`                   |
+| The build      | `npm run build`                                  |
+| UI             | Open in Chrome, exercise the flow                |
+| Logic          | Write/run a test                                 |
+| A bug fix      | Reproduce, fix, reproduce again — fixed?         |
+| DB schema      | Inspect via Supabase MCP                         |
+| An assumption  | `grep` / read before you claim it                |
+
+Ask the user only for product decisions, visual taste, or domain ambiguity. When you ask, lead with what you already verified.
+
+---
+
+## Documentation map
+
+- [Architecture](./ARCHITECTURE.md) — system overview
+- [Design](./docs/DESIGN.md) — design system, tokens, responsive
+- [Frontend](./docs/FRONTEND.md) — TS conventions, components, i18n
+- [Product sense](./docs/PRODUCT_SENSE.md) — PRD, user stories
+- [Quality](./docs/QUALITY_SCORE.md) — lint, typecheck, build, test gates
+- [Reliability](./docs/RELIABILITY.md) — error handling, observability
+- [Security](./docs/SECURITY.md) — RLS, auth, secrets, env vars
+- [Plans](./docs/PLANS.md) — active and completed plans index
+- [ADRs](./docs/adr/) — architectural decision records
+
+## Quickstart
+
+\`\`\`bash
+npm run dev
+\`\`\`
+```
+
+### Étape 6.3 : Création de `ARCHITECTURE.md`
+
+Crée à la racine :
+
+```markdown
+# Architecture
+
+System overview. High-level only — implementation details belong in `docs/`.
+
+## Stack
+
+| Layer        | Technology                          |
+|--------------|-------------------------------------|
+| Build        | Vite                                |
+| Frontend     | React 18 + TypeScript               |
+| Styling      | Tailwind CSS + shadcn/ui            |
+| Routing      | React Router v6                     |
+| State / data | TanStack Query                      |
+| Forms        | React Hook Form + Zod               |
+| i18n         | react-i18next (fr / en / de / lu)   |
+| Backend      | Supabase (Postgres, Auth, Storage)  |
+
+## Source layout
 
 \`\`\`
-supabase/migrations/
-└── YYYYMMDDHHMMSS_description.sql
+src/
+├── components/
+│   ├── ui/              # shadcn/ui primitives — do not edit
+│   ├── layout/          # Header, Footer, Sidebar
+│   └── features/        # feature-scoped components
+├── hooks/
+├── lib/
+├── locales/             # fr / en / de / lu
+├── pages/
+├── services/            # API clients (supabase.ts...)
+└── types/
+
+supabase/
+└── migrations/
 \`\`\`
 
-Exemple : `20250102143000_create_users_table.sql`
+## Data flow
 
-**Ne JAMAIS** :
-- Modifier la DB directement via le dashboard sans migration
-- Utiliser le SQL Editor pour des changements permanents
-- Appliquer des modifications sans fichier de migration versionné
+Browser → React component → TanStack Query → Supabase JS client → Supabase REST/Realtime → Postgres.
 
-**Process** :
-1. Créer le fichier de migration dans `supabase/migrations/`
-2. Écrire le SQL (CREATE, ALTER, etc.)
-3. Appliquer via MCP ou `supabase db push`
-4. Commit le fichier de migration
+Auth state lives in `useAuth` hook subscribing to Supabase `onAuthStateChange`.
 
-### Row Level Security (RLS)
+## Environment
 
-- Activer RLS sur TOUTES les tables
-- Créer des policies explicites pour chaque opération (SELECT, INSERT, UPDATE, DELETE)
-- Tester les policies avec différents rôles
+| Variable                  | Description                       |
+|---------------------------|-----------------------------------|
+| `VITE_SUPABASE_URL`       | Supabase project URL              |
+| `VITE_SUPABASE_ANON_KEY`  | Supabase public anon key          |
+```
 
-## Stack Technique
+### Étape 6.4 : Création des fichiers `docs/*.md`
 
-| Catégorie | Technologie |
-|-----------|-------------|
-| Build | Vite |
-| Frontend | React 18 + TypeScript |
-| Styling | Tailwind CSS + shadcn/ui |
-| Routing | React Router v6 |
-| State | TanStack Query |
-| Forms | React Hook Form + Zod |
-| Backend | Supabase |
-| i18n | react-i18next |
+Crée chaque fichier avec le contenu indiqué.
 
-## Internationalisation (i18n)
+#### `docs/DESIGN.md`
 
-L'application doit supporter **4 langues** :
+```markdown
+# Design
 
-| Code | Langue |
-|------|--------|
-| `fr` | Français (défaut) |
-| `en` | English |
-| `de` | Deutsch |
-| `lu` | Lëtzebuergesch |
+## Responsive
 
-### Structure des traductions
+Mobile-first. Build for `sm` and scale up.
 
-\`\`\`
-src/locales/
-├── fr/
-│   └── translation.json
-├── en/
-│   └── translation.json
-├── de/
-│   └── translation.json
-└── lu/
-    └── translation.json
-\`\`\`
+| Breakpoint | Min width | Target          |
+|------------|-----------|-----------------|
+| `sm`       | 640px     | Large mobile    |
+| `md`       | 768px     | Tablet          |
+| `lg`       | 1024px    | Desktop         |
+| `xl`       | 1280px    | Large desktop   |
 
-### Règles
+Rules:
+- No horizontal scroll at any breakpoint.
+- Test on mobile, tablet, and desktop before shipping a UI change.
+- Use Tailwind's `sm:`, `md:`, `lg:` prefixes — don't reinvent breakpoints.
 
-- **Aucun texte hardcodé** dans les composants
-- Utiliser `useTranslation()` pour tous les textes
-- Clés de traduction en anglais, format dot notation : `common.buttons.submit`
-- Toujours ajouter les 4 langues en même temps
+## Design tokens
 
-## Responsive Design
+Defined as CSS variables in `src/index.css`. Light + dark themes share the same variable names.
 
-L'application doit être **mobile-first** et fonctionner sur :
-
-| Breakpoint | Taille | Usage |
-|------------|--------|-------|
-| `sm` | 640px+ | Mobile large |
-| `md` | 768px+ | Tablette |
-| `lg` | 1024px+ | Desktop |
-| `xl` | 1280px+ | Desktop large |
-
-### Règles
-
-- Commencer par le design mobile
-- Utiliser les classes Tailwind responsive (`sm:`, `md:`, etc.)
-- Tester sur mobile, tablette et desktop
-- Pas de scroll horizontal
+Don't hardcode colors in components — reference the token (`bg-background`, `text-foreground`, `border-border`...).
 
 ## SEO
 
-### Règles
+- Each page sets a unique `<title>` and `<meta description>`.
+- Use semantic HTML: `<header>`, `<main>`, `<nav>`, `<article>`.
+- Images need a descriptive `alt`.
+- URLs are clean and lowercase.
+- Open Graph tags for shareable pages.
 
-- Chaque page doit avoir un `<title>` unique et descriptif
-- Utiliser les balises `<meta description>` appropriées
-- Structure HTML sémantique (`<header>`, `<main>`, `<nav>`, `<article>`, etc.)
-- Images avec attribut `alt` descriptif
-- URLs propres et lisibles
-- Balises Open Graph pour le partage social
-
-### Composant SEO
-
-Utiliser un composant `<SEO>` pour chaque page :
+Use the `<SEO>` component (when created):
 
 \`\`\`tsx
-<SEO
-  title="Titre de la page"
-  description="Description pour les moteurs de recherche"
-/>
+<SEO title="Page title" description="..." />
 \`\`\`
+```
 
-## Qualité du Code
+#### `docs/FRONTEND.md`
 
-### TypeScript
+```markdown
+# Frontend
 
-- **Strict mode** activé
-- Pas de `any` sauf cas exceptionnels documentés
-- Interfaces pour les props de composants
-- Types pour les réponses API
+## TypeScript
 
-### Conventions de nommage
+- Strict mode is on. Don't disable it.
+- No `any` unless commented with the reason.
+- Interfaces for component props. Types for API responses.
 
-| Type | Convention | Exemple |
-|------|------------|---------|
-| Composants | PascalCase | `UserProfile.tsx` |
-| Hooks | camelCase + use | `useAuth.ts` |
-| Utilitaires | camelCase | `formatDate.ts` |
-| Types | PascalCase | `UserType` |
-| Constantes | UPPER_SNAKE_CASE | `API_URL` |
+## Naming
 
-### Imports
+| Kind        | Convention         | Example          |
+|-------------|--------------------|------------------|
+| Component   | PascalCase         | `UserProfile.tsx`|
+| Hook        | `use` + camelCase  | `useAuth.ts`     |
+| Utility     | camelCase          | `formatDate.ts`  |
+| Type        | PascalCase         | `UserType`       |
+| Constant    | UPPER_SNAKE_CASE   | `API_URL`        |
 
-Toujours utiliser les alias `@/` :
+## Imports
+
+Use the `@/` alias for everything inside `src/`:
 
 \`\`\`ts
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
 \`\`\`
 
-### Structure des composants
+## Component structure
 
 \`\`\`tsx
 // 1. Imports
 import { useState } from 'react'
 
 // 2. Types
-interface Props {
-  title: string
-}
+interface Props { title: string }
 
-// 3. Composant
+// 3. Component
 export function MyComponent({ title }: Props) {
   // 4. Hooks
   const [state, setState] = useState()
@@ -1129,68 +1173,244 @@ export function MyComponent({ title }: Props) {
 }
 \`\`\`
 
-### Fichiers
+One component per file. File name = component name.
 
-- Un composant par fichier
-- Nom du fichier = nom du composant
-- Index files pour les exports groupés
+## i18n (fr / en / de / lu)
 
-## Structure du Projet
+Four languages, always in sync. `fr` is the fallback.
 
-\`\`\`
-src/
-├── components/
-│   ├── ui/              # Composants shadcn/ui (ne pas modifier)
-│   ├── layout/          # Header, Footer, Sidebar
-│   └── features/        # Composants métier par feature
-├── hooks/               # Custom hooks
-├── lib/                 # Utilitaires
-├── locales/             # Fichiers de traduction
-├── pages/               # Pages/routes
-├── services/            # API calls, Supabase client
-└── types/               # Types TypeScript globaux
-\`\`\`
+| Code | Language        |
+|------|-----------------|
+| `fr` | Français        |
+| `en` | English         |
+| `de` | Deutsch         |
+| `lu` | Lëtzebuergesch  |
 
-## Commandes
+Rules:
+- **No hardcoded strings** in components. Always `useTranslation()`.
+- Translation keys in English, dot notation: `common.buttons.submit`.
+- When you add a key, add it to all four locale files in the same commit.
 
-\`\`\`bash
-npm run dev      # Serveur de développement
-npm run build    # Build production
-npm run preview  # Preview du build
-npm run lint     # Linter
-\`\`\`
-
-## Variables d'Environnement
-
-| Variable | Description |
-|----------|-------------|
-| `VITE_SUPABASE_URL` | URL du projet Supabase |
-| `VITE_SUPABASE_ANON_KEY` | Clé publique Supabase |
-
-## Git
-
-### Commits
-
-Format : `type: description`
-
-Types :
-- `feat:` nouvelle fonctionnalité
-- `fix:` correction de bug
-- `refactor:` refactoring
-- `style:` formatage, CSS
-- `docs:` documentation
-- `test:` tests
-- `chore:` maintenance
-
-### Branches
-
-- `main` : production
-- `develop` : développement
-- `feature/xxx` : nouvelles features
-- `fix/xxx` : corrections
+Files live in `src/locales/<code>/translation.json`.
 ```
 
-### Étape 6.2 : Réinitialisation de App.tsx
+#### `docs/PRODUCT_SENSE.md`
+
+```markdown
+# Product Sense
+
+## Project description
+
+[DESCRIPTION_COURTE_DU_PROJET]
+
+## Main features
+
+[LISTE_FONCTIONNALITES_DU_PRD]
+
+## User types
+
+[LISTE_TYPES_UTILISATEURS]
+
+## Source PRD
+
+The full PRD lives in `docs/product-specs/`. Product specs are the source of truth for what to build.
+```
+
+#### `docs/QUALITY_SCORE.md`
+
+```markdown
+# Quality Score
+
+Run these gates before saying "done."
+
+## Commands
+
+\`\`\`bash
+npm run dev      # dev server
+npm run build    # production build (also typechecks via `tsc -b`)
+npm run lint     # ESLint
+npm run preview  # preview the production build
+\`\`\`
+
+## Gates
+
+| Gate          | Command            | When                         |
+|---------------|--------------------|------------------------------|
+| Typecheck     | `tsc --noEmit`     | After any TS change          |
+| Lint          | `npm run lint`     | After any code change        |
+| Build         | `npm run build`    | Before committing            |
+| Manual UI     | open in Chrome     | After any UI change          |
+
+A change isn't done until every applicable gate is green.
+```
+
+#### `docs/RELIABILITY.md`
+
+```markdown
+# Reliability
+
+## Error handling
+
+- Throw early, catch at the boundary (page / route handler).
+- User-facing errors get a translated, actionable message — never a stack trace.
+- Network errors: TanStack Query retries automatically; let it. Show a toast on permanent failure.
+- Supabase errors: check `error` on every response, never assume `data` exists.
+
+## Observability
+
+- `console.error` for unexpected errors during development.
+- TODO: wire up Sentry / equivalent before production traffic.
+
+## Loading states
+
+Every async operation has an explicit loading state. Never show a blank screen while data is in flight.
+```
+
+#### `docs/SECURITY.md`
+
+```markdown
+# Security
+
+## Secrets
+
+- Secrets live in `.env`. Never commit `.env`.
+- Frontend env vars are public — anything in `VITE_*` is shipped to the browser.
+- Server-only secrets (service role keys, admin tokens) never go in `VITE_*`.
+
+## Supabase
+
+### Migrations
+
+**Always** create a migration file before changing the database schema:
+
+\`\`\`
+supabase/migrations/YYYYMMDDHHMMSS_description.sql
+\`\`\`
+
+Example: `20250102143000_create_users_table.sql`
+
+Never:
+- Edit the schema via the dashboard without committing a matching migration.
+- Use the SQL Editor for permanent changes.
+- Apply changes outside the versioned migration flow.
+
+Process:
+1. Write the SQL in `supabase/migrations/`.
+2. Apply via MCP or `supabase db push`.
+3. Commit the migration file.
+
+### Row Level Security (RLS)
+
+- RLS is **on** for every table. No exceptions.
+- Write explicit policies for every operation: SELECT, INSERT, UPDATE, DELETE.
+- Test policies with different roles (anon, authenticated, service_role) before shipping.
+
+### Auth
+
+`useAuth` hook in `src/hooks/useAuth.ts` is the only entry point for auth state. Don't read `supabase.auth` directly from components.
+```
+
+#### `docs/PLANS.md`
+
+```markdown
+# Plans
+
+Active and completed implementation plans. Each plan is a markdown file under `exec-plans/`.
+
+## Active
+
+See [`exec-plans/active/`](./exec-plans/active/).
+
+## Completed
+
+See [`exec-plans/completed/`](./exec-plans/completed/).
+
+## Tech debt
+
+See [`exec-plans/tech-debt-tracker.md`](./exec-plans/tech-debt-tracker.md).
+
+## Format
+
+Each plan file is named `YYYY-MM-DD-short-description.md` and contains:
+
+- **Goal** — one sentence.
+- **Why** — context the reader needs.
+- **Approach** — the chosen design.
+- **Steps** — checklist.
+- **Risks / unknowns** — what could go wrong.
+- **Status** — date + outcome on completion.
+
+Move a plan to `completed/` when done. Don't delete; the history is useful.
+```
+
+#### `docs/exec-plans/tech-debt-tracker.md`
+
+```markdown
+# Tech debt tracker
+
+A running list of known shortcuts, workarounds, and "fix later" decisions.
+
+Format:
+
+| Date       | Item | Why we punted | Fix when                    |
+|------------|------|----------------|-----------------------------|
+| YYYY-MM-DD | ...  | ...            | ...                         |
+
+Add a row when you punt. Remove it when you fix it.
+```
+
+#### `docs/design-docs/index.md`
+
+```markdown
+# Design docs
+
+Long-form design documents that explain the why behind a system or feature.
+
+A design doc is appropriate when:
+- A decision affects multiple modules.
+- The reasoning would be hard to recover from the code alone.
+- Future contributors need to understand the trade-offs to make compatible changes.
+
+For single-decision records, use ADRs in [`../adr/`](../adr/).
+```
+
+#### `docs/product-specs/index.md`
+
+```markdown
+# Product specs
+
+The source PRD and feature specs live here.
+
+`PRD.md` is the canonical statement of what this product does and why. Update it when scope changes.
+```
+
+Si l'user a fourni un PRD, sauvegarde-le dans `docs/product-specs/PRD.md`.
+
+#### `docs/references/README.md`
+
+```markdown
+# References
+
+External library docs, `llms.txt` files, and any reference material useful to keep close to the code but not authored by us.
+
+Add files here when an external library has documentation that benefits from being indexed alongside the codebase (e.g. `<lib>-llms.txt`).
+```
+
+#### `docs/generated/README.md`
+
+```markdown
+# Generated artifacts
+
+Files in this folder are produced by tooling, not authored by hand.
+
+Examples:
+- `db-schema.md` — generated from the live Supabase schema.
+- API specs from OpenAPI generation.
+
+**Never edit files in this folder directly.** Re-run the generator and commit the new output.
+```
+
+### Étape 6.5 : Réinitialisation de `App.tsx`
 
 Remplace `src/App.tsx` avec une version propre pour démarrer :
 
@@ -1205,7 +1425,7 @@ function HomePage() {
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <h1 className="text-4xl font-bold mb-4">[NOM_PROJET]</h1>
-        <p className="text-muted-foreground mb-8">[DESCRIPTION]</p>
+        <p className="text-muted-foreground mb-8">[DESCRIPTION_COURTE_DU_PROJET]</p>
         <p className="text-sm text-muted-foreground">
           Prêt à développer ! Consulte CLAUDE.md pour les détails du projet.
         </p>
@@ -1233,11 +1453,7 @@ export default App
 
 ## PHASE 7 : FINALISATION
 
-### Étape 7.1 : Génération du README
-
-Crée un `README.md` propre basé sur le PRD et le CLAUDE.md.
-
-### Étape 7.2 : Création repo GitHub et push
+### Étape 7.1 : Création repo GitHub et push
 
 Demande à l'utilisateur : "Tu veux que je crée le repo GitHub et push le code ?"
 
@@ -1253,7 +1469,7 @@ git remote remove origin
 gh repo create [NOM_PROJET] --private --source=. --remote=origin --push
 ```
 
-### Étape 7.3 : Premier commit
+### Étape 7.2 : Premier commit
 
 ```bash
 git add .
@@ -1261,7 +1477,7 @@ git commit -m "Initial setup: [NOM_PROJET] - Ready to build"
 git push
 ```
 
-### Étape 7.4 : Récapitulatif final
+### Étape 7.3 : Récapitulatif final
 
 Affiche :
 
@@ -1270,11 +1486,13 @@ Affiche :
 
 ✅ Stack technique configurée (React, Tailwind, shadcn, i18n...)
 ✅ Supabase connecté et testé
-✅ CLAUDE.md avec les conventions génériques
+✅ Documentation structurée (CLAUDE.md + docs/)
 ✅ Repo GitHub créé
 
 📁 Fichiers importants :
-   - CLAUDE.md           → Conventions (SEO, i18n, migrations, etc.)
+   - CLAUDE.md           → Principes + table des matières
+   - ARCHITECTURE.md     → Vue système
+   - docs/               → Documentation thématique
    - .env                → Variables d'environnement
    - supabase/migrations → Fichiers de migration SQL
 
@@ -1301,7 +1519,7 @@ Ton repo : https://github.com/[USERNAME]/[NOM_PROJET]
 - **Attends** la confirmation utilisateur pour les étapes critiques
 - **Adapte** le code selon les choix (avec/sans Supabase, avec/sans auth)
 - **Le test de validation est OBLIGATOIRE** si Supabase est choisi
-- **Le CLAUDE.md contient les conventions génériques**, pas les specs du projet
-- **Le PRD sert uniquement à comprendre** ce que l'utilisateur veut construire
+- **CLAUDE.md est une table des matières + principes**, pas une encyclopédie
+- **Le contenu thématique vit dans `docs/*.md`** — splitte, ne concatène pas
 - **Migrations obligatoires** : toujours créer un fichier de migration avant de modifier Supabase
 - Si une erreur survient, explique clairement et propose une solution
