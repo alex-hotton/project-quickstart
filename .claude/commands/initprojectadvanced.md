@@ -6,7 +6,7 @@ Tu es un assistant qui aide à créer un nouveau projet web moderne **avec un wo
 - 7 skills pré-installés (PRD/refactor/TDD + supabase-postgres + frontend-design)
 - Création de `CONTEXT.md` (vocabulaire de domaine, alimenté par le skill `improve-codebase-architecture`)
 - Section "Skills installed" dans `CLAUDE.md`
-- Workflow PRD-first dogfoodé dès la Phase 7
+- PRD publié comme GitHub issue dès la Phase 7 (via `grill-me`+`to-prd` ou collé manuellement)
 
 ---
 
@@ -850,47 +850,102 @@ Tu dois voir l'URL du repo et `PRIVATE`. Si erreur, vérifie l'auth `gh` (`gh au
 
 ---
 
-## PHASE 7 : PRD via grill-me + to-prd (DOGFOOD)
+## PHASE 7 : PRD COMME GITHUB ISSUE
 
-**On utilise immédiatement la méthodologie qu'on vient d'installer.** Pas de "colle ton PRD" — on suit le workflow rigoureux dès le premier jour.
+**Objectif** : produire un PRD publié comme GitHub issue (avec label `needs-triage`) sur le repo de Phase 6. Le PRD étant une issue, `to-issues` (Phase 10) pourra l'attaquer ensuite.
 
-### Étape 7.1 : Invocation du skill `grill-me`
+Deux chemins possibles selon où l'utilisateur veut faire le PRD. **Demande-lui** au début de la phase.
 
-Dis à l'utilisateur :
+### Étape 7.1 : Choix de la méthode (AskUserQuestion)
+
+Utilise le tool `AskUserQuestion` pour poser :
+
+> **Question** : "Tu veux faire ton PRD comment ?"
+>
+> - **Option A** : "Avec `grill-me` ici, dans Claude Code (interview interactive)"
+> - **Option B** : "J'ai déjà un PRD (dans Cowork ou ailleurs), je vais le coller"
+
+Branche selon la réponse.
+
+---
+
+### Chemin A — `grill-me` + `to-prd`
+
+#### Étape 7.A.1 : Invocation du skill `grill-me`
+
+Dis :
 ```
-Maintenant, on définit ce que tu veux construire. On utilise la méthodologie
-qu'on vient d'installer : on commence par grill-me (interview rigoureuse),
-puis to-prd (publie le PRD comme GitHub issue).
-
-C'est exactement le workflow installé — autant l'utiliser dès maintenant
-plutôt que de dériver après.
-
-Décris-moi ton projet en quelques phrases, ou tape "grille-moi" pour
-qu'on commence direct l'interview.
+On commence l'interview. Décris-moi ton projet en quelques phrases (ou
+tape "grille-moi" et je démarre les questions à froid).
 ```
 
-Une fois que l'utilisateur a donné un point de départ (1-2 phrases ou plus), **invoque le skill `grill-me`** et conduis l'interview en suivant exactement ses instructions :
+Une fois que l'utilisateur a donné un point de départ, **invoque le skill `grill-me`** et conduis l'interview en suivant exactement ses instructions :
 - Une question à la fois
 - Pour chaque question, propose une réponse recommandée
 - Si une question peut être résolue en explorant le code, fais-le au lieu de demander
 - Continue jusqu'à compréhension partagée complète
 
-À ce stade le code n'est qu'un scaffold (React + Supabase) — explore-le pour donner du contexte aux questions, mais l'essentiel des questions porteront sur la **logique métier** du projet à construire.
+À ce stade le code est un scaffold React + Supabase — explore-le pour ancrer les questions, mais l'essentiel portera sur la **logique métier**.
 
-### Étape 7.2 : Invocation du skill `to-prd`
+#### Étape 7.A.2 : Invocation du skill `to-prd`
 
-Quand l'interview est terminée et qu'on a une compréhension partagée, **invoque le skill `to-prd`**. Il va :
+Quand l'interview converge, **invoque le skill `to-prd`**. Il va :
 - Synthétiser la conversation en PRD selon son template (Problem, Solution, User Stories, Implementation Decisions, Testing Decisions, Out of Scope, Further Notes)
-- **Publier le PRD comme GitHub issue** sur le repo qu'on vient de créer (Phase 6)
-- Appliquer le label `needs-triage`
+- **Publier le PRD comme GitHub issue** avec le label `needs-triage`
 
 Le skill demandera confirmation avant publication. Confirme.
 
-### Étape 7.3 : Référence le PRD pour la suite
+→ Saute à l'étape 7.3.
 
-Récupère l'URL et le numéro de l'issue créée (`gh issue list --label needs-triage --limit 1 --json number,url,title`).
+---
 
-Note-les — ils seront référencés dans `docs/PRODUCT_SENSE.md` à la phase suivante.
+### Chemin B — PRD collé par l'utilisateur
+
+#### Étape 7.B.1 : Demande du PRD
+
+Dis :
+```
+Colle ton PRD ici (depuis Cowork ou n'importe quel autre outil).
+- Markdown OK
+- N'importe quelle longueur OK
+- Quand tu as fini, envoie ton message
+```
+
+Attends que l'utilisateur colle son contenu.
+
+#### Étape 7.B.2 : Extraction du titre
+
+Demande à l'utilisateur (ou propose) un titre court pour l'issue (max ~80 chars). Exemple : "PRD: [nom du projet ou de la feature principale]". Si évident depuis le PRD, propose-le directement et attends confirmation rapide.
+
+#### Étape 7.B.3 : Publication comme GitHub issue
+
+Crée le label `needs-triage` s'il n'existe pas, puis publie le PRD comme issue :
+
+```bash
+gh label create needs-triage --color FBCA04 --description "Awaiting triage" 2>/dev/null || true
+
+gh issue create \
+  --title "[TITRE_DU_PRD]" \
+  --body "$(cat <<'PRD_EOF'
+[CONTENU_COLLÉ_PAR_L_UTILISATEUR]
+PRD_EOF
+)" \
+  --label needs-triage
+```
+
+→ Continue à l'étape 7.3.
+
+---
+
+### Étape 7.3 : Référence le PRD pour la suite (commun aux deux chemins)
+
+Récupère l'URL, le numéro et le titre de l'issue créée :
+
+```bash
+gh issue list --label needs-triage --limit 1 --json number,url,title
+```
+
+Note ces valeurs — elles seront référencées dans `docs/PRODUCT_SENSE.md` et `docs/product-specs/index.md` à la Phase 8, et utilisées par `to-issues` à la Phase 10.
 
 Confirme à l'utilisateur :
 ```
@@ -1710,7 +1765,7 @@ Affiche :
 ✅ Supabase connecté                 (Phase 3-4)
 ✅ 7 skills installés                (Phase 5)
 ✅ Repo GitHub                       (Phase 6)
-✅ PRD publié comme GitHub issue     (Phase 7) — skill: to-prd
+✅ PRD publié comme GitHub issue     (Phase 7)
 ✅ Documentation structurée          (Phase 8)
 ✅ Code initial pushé                (Phase 9)
 ✅ PRD découpé en issues             (Phase 10) — skill: to-issues
@@ -1727,9 +1782,14 @@ Affiche :
 🔗 PR    : [URL_PR_CRÉÉE_À_L_ÉTAPE_11.5]
 
 ═══════════════════════════════════════════════════════════════════
-TU AS DÉJÀ UTILISÉ 4 DES 5 SKILLS MÉTHODO :
-  ✓ grill-me                       (Phase 7 — interview du PRD)
-  ✓ to-prd                         (Phase 7 — PRD GitHub issue)
+SKILLS UTILISÉS PENDANT L'INIT (selon ton choix de Phase 7) :
+  • Si tu as choisi le chemin grill-me :
+      ✓ grill-me                   (Phase 7A — interview du PRD)
+      ✓ to-prd                     (Phase 7A — PRD GitHub issue)
+  • Si tu as collé ton PRD :
+      (skills grill-me / to-prd pas utilisés cette fois,
+       tu pourras les invoquer pour la prochaine feature)
+
   ✓ to-issues                      (Phase 10 — slices verticales)
   ✓ tdd                            (Phase 11 — red-green-refactor)
   ☐ improve-codebase-architecture  (à utiliser quand le code feel muddy)
@@ -1755,7 +1815,7 @@ Plus les 2 bonus :
 - **Attends** la confirmation utilisateur pour les étapes critiques.
 - **Adapte** le code selon les choix (avec/sans Supabase, avec/sans auth).
 - **Le test de validation Supabase est OBLIGATOIRE** si Supabase est choisi.
-- **Phase 7 = dogfood obligatoire** : on utilise `grill-me` + `to-prd` pour collecter le projet, pas un "colle ton PRD".
+- **Phase 7 = fork à demander à l'utilisateur** via AskUserQuestion : soit dogfood (`grill-me` + `to-prd`), soit paste depuis Cowork. Dans les deux cas le PRD finit comme GitHub issue avec label `needs-triage`. La suite (Phase 10 `to-issues`) marche pareil.
 - **Phases 10 et 11 ne sont PAS optionnelles** : on enchaîne sur to-issues + tdd dès que le push initial est fait. C'est le coeur de la version advanced — tu sors avec une feature livrée et 4 skills déjà utilisés en pratique.
 - **L'ordre des phases compte** : repo GitHub Phase 6 (avant `to-prd`), `to-prd` Phase 7 (avant `to-issues`), `to-issues` Phase 10 (avant `tdd`).
 - **CLAUDE.md = principes + TOC**, pas une encyclopédie.

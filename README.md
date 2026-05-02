@@ -43,11 +43,13 @@ Les deux commandes posent le **même setup technique** : stack identique, struct
 
 **Différence clé du flow** : `/initproject` te demande "colle ton PRD ou décris-moi ton projet" et s'arrête au push GitHub. `/initprojectadvanced` enchaîne :
 
-1. **Phase 7** — invoque `grill-me` (interview rigoureuse) puis `to-prd` (PRD publié comme GitHub issue)
+1. **Phase 7** — te demande comment tu veux faire le PRD :
+   - **(A)** `grill-me` ici dans Claude Code (interview interactive) → `to-prd` publie le PRD comme GitHub issue
+   - **(B)** Tu colles ton PRD existant (depuis Cowork ou ailleurs) → publié comme GitHub issue
 2. **Phase 10** — invoque `to-issues` qui découpe le PRD en GitHub issues vertical-slice
 3. **Phase 11** — invoque `tdd` pour livrer la **première feature** en red-green-refactor + ouvre une PR
 
-Tu termines `/initprojectadvanced` avec : un repo GitHub privé, un PRD documenté, des issues prêtes à attaquer, **une feature livrée en TDD**, et 4 des 5 skills méthodo déjà utilisés en pratique.
+Tu termines `/initprojectadvanced` avec : un repo GitHub privé, un PRD documenté comme GitHub issue, des slices prêtes à attaquer, **une feature livrée en TDD**.
 
 **Recommandation** : `/initprojectadvanced` par défaut. Tu apprends la méthodo en livrant du code réel, sur ton vrai projet.
 
